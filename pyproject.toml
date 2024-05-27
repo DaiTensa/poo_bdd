@@ -1,0 +1,14 @@
+[tool.poetry]
+name = "sqlite-projects"
+version = "0.1.0"
+description = "projet initiation à sql alchemy sqlite3"
+authors = ["DaiTensa <dai.tensaout@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

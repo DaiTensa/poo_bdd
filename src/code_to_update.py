@@ -1,33 +1,26 @@
-from sqlalchemy import Column, Integer, String, create_engine
-from sqlalchemy.ext.declarative import declarative_base
+import sys
+sys.path.append('/home/dai/Documents/Python_Projects/sql/sqlite_projects')
+
+
+from sqlalchemy import create_engine
+from models import Base
+from utils.mes_fonctions import import_books_from_csv 
 from sqlalchemy.orm import sessionmaker
-import csv
+from models import Book
 
-Base = declarative_base()
 
-class Book(Base):
-    #################
-    # Modele a compléter
-    pass
+
+db_path = 'sqlite:///books.db'
+
 
 # Configuration de la base de données
-engine = create_engine('sqlite:///books.db')
+engine = create_engine(db_path)
 Base.metadata.create_all(engine)
 
 Session = sessionmaker(bind=engine)
 session = Session()
 
-def import_books_from_csv(csv_file_path):
-    with open(csv_file_path, newline='', encoding='utf-8') as csvfile:
-        csvreader = csv.DictReader(csvfile) # to Update???
-        for row in csvreader:
-            book = Book(
-                ISBN=row['ISBN'],
-                ###to complete
-            )
-            session.add(book)
-        session.commit()
 
 # Chemin vers le fichier CSV
-csv_file_path = 'books.csv'
-import_books_from_csv(csv_file_path)
+csv_file_path = '/home/dai/Documents/Python_Projects/sql/sqlite_projects/data/books.csv'
+import_books_from_csv(csv_file_path, session= session, model=Book)

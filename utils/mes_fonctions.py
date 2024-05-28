@@ -16,5 +16,7 @@ def import_books_from_csv(csv_file_path, session, model):
                 Publisher=row['Publisher']
             )
             session.add(book)
+            print(book)
             number_of_rows += 1
         session.commit()
+

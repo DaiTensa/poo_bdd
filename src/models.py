@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String, Float, ForeignKey
 from sqlalchemy.orm import relationship, declarative_base
-# from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import func
+from statistics import mean, stdev
 
 
 # classe de base
@@ -15,15 +16,20 @@ class Book(Base):
     Year_Of_Publication = Column(Integer, index=True)
     Publisher = Column(String, index=True)
 
-    def __init__(self, ISBN, Book_Title, Book_Author, Year_Of_Publication, Publisher):
-        self.ISBN = ISBN 
-        self.Book_Title = Book_Title
-        self.Book_Author = Book_Author
-        self.Year_Of_Publication = Year_Of_Publication
-        self.Publisher = Publisher
-
     def __repr__(self):
         return f"{self.Book_Title} [{self.Book_Author}] ({self.Year_Of_Publication})"
+    
+    @classmethod
+    def min_year(cls, session):
+        query_years = session.query(cls.Year_Of_Publication).all()
+        years = [year[0] for year in query_years if year[0] != "NULL"]
+        return min(years)
+    
+    @classmethod
+    def max_year(cls, session):
+        query_years = session.query(cls.Year_Of_Publication).all()
+        years = [year[0] for year in query_years if year[0] != "NULL"]
+        return max(years)
     
 
 class Users(Base):
@@ -32,10 +38,31 @@ class Users(Base):
     Location = Column(String, index=True)
     Age = Column(Integer, unique=False, index=True, nullable=True)
 
-    def __init__(self, User_Id, Location, Age):
-        self.User_Id = User_Id
-        self.Location = Location
-        self.Age = Age
+    # moyenne des ages
+    @classmethod
+    def mean_ages(cls, session):
+        query_ages = session.query(cls.Age).all()
+        ages = [age[0] for age in query_ages if age[0] != "NULL"]
+        # mean ages
+        mean_age = mean(ages)
+        return mean_age
+    
+    # ecart-type des ages
+    @classmethod
+    def stdev_ages(cls, session):
+        query_ages = session.query(cls.Age).all()
+        ages = [age[0] for age in query_ages if age[0] != "NULL"]
+        # mean ages
+        stdev_age = stdev(ages)
+        return stdev_age
+    
+    # count ages
+    @classmethod
+    def count_ages(cls, session):
+        query_ages = session.query(cls.Age).all()
+        ages = [ages[0] for ages in query_ages if ages[0] != "NULL"]
+        count_ages = len(ages)
+        return count_ages
 
 
 class Ratings(Base):
@@ -44,10 +71,30 @@ class Ratings(Base):
     ISBN = Column(String,primary_key=True ,index=True) # ForeignKey("books.ISBN")
     Book_Rating = Column(Integer, index=True)
 
-    def __init__(self, User_Id, ISBN, Book_Rating):
-        self.User_Id = User_Id
-        self.ISBN = ISBN
-        self.Book_Rating = Book_Rating
+
+    # moyenne des notes
+    @classmethod
+    def mean_ratings(cls, session):
+        query_book_rating = session.query(cls.Book_Rating).all()
+        ratings = [book_rating[0] for book_rating in query_book_rating if book_rating[0] != "NULL"]
+        mean_rating = mean(ratings)
+        return mean_rating
+    
+    # ecart-type des notes
+    @classmethod
+    def stdev_ratings(cls, session):
+        query_book_rating = session.query(cls.Book_Rating).all()
+        ratings = [book_rating[0] for book_rating in query_book_rating if book_rating[0] != "NULL"]
+        stdev_rating = stdev(ratings)
+        return stdev_rating
+
+    # count book ratings
+    @classmethod
+    def count_ratings(cls, session):
+        query_book_rating = session.query(cls.Book_Rating).all()
+        ratings = [book_rating[0] for book_rating in query_book_rating if book_rating[0] != "NULL"]
+        count_rating = len(ratings)
+        return count_rating
 
 
 

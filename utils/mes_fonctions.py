@@ -1,12 +1,11 @@
 import csv
 
-# Import books from books.csv
-
+# function to import books
 def import_books_from_csv(csv_file_path, session, model):
     with open(csv_file_path, newline='', encoding='ISO-8859-1') as csvfile:
         csvreader = csv.DictReader(csvfile, delimiter=';', quotechar='"', escapechar='\\')
         number_of_rows = 0
-
+        
         for row in csvreader:
             if number_of_rows >=50000:
                 break
@@ -22,14 +21,12 @@ def import_books_from_csv(csv_file_path, session, model):
             number_of_rows += 1
         session.commit()
 
-
-# Import users from users.csv
-
+# function to import users data
 def import_users_from_csv(csv_file_path, session, model):
     with open(csv_file_path, newline='', encoding='ISO-8859-1') as csvfile:
         csvreader = csv.DictReader(csvfile, delimiter=';', quotechar='"', escapechar='\\')
         number_of_rows = 0
-
+    
         for row in csvreader:
             if number_of_rows >=50000:
                 break
@@ -42,7 +39,7 @@ def import_users_from_csv(csv_file_path, session, model):
             number_of_rows += 1
         session.commit()
 
-
+# function to import books ratings
 def import_ratings_from_csv(csv_file_path, session, model):
     with open(csv_file_path, newline='', encoding='ISO-8859-1') as csvfile:
         csvreader = csv.DictReader(csvfile, delimiter=';', quotechar='"', escapechar='\\')

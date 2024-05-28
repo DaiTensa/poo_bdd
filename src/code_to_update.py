@@ -11,7 +11,7 @@ from sqlalchemy import select
 
 
 
-db_path = 'sqlite:///books.db'
+db_path = 'sqlite:///data/books.db'
 
 
 # Configuration de la base de données

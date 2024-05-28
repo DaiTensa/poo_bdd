@@ -6,7 +6,7 @@ def import_books_from_csv(csv_file_path, session, model):
         number_of_rows = 0
 
         for row in csvreader:
-            if number_of_rows >=29:
+            if number_of_rows >=50000:
                 break
             book = model(
                 ISBN=row['ISBN'],

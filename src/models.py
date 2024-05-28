@@ -23,3 +23,6 @@ class Book(Base):
         self.Year_Of_Publication = Year_Of_Publication
         self.Publisher = Publisher
 
+    def __repr__(self):
+        return f"{self.Book_Title}[{self.Book_Author}]({self.Year_Of_Publication})"
+

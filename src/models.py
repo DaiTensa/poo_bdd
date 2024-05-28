@@ -26,12 +26,28 @@ class Book(Base):
         return f"{self.Book_Title} [{self.Book_Author}] ({self.Year_Of_Publication})"
     
 
-# class Users(Base):
-#     pass
+class Users(Base):
+    __tablename__ = "users"
+    User_Id = Column(Integer, primary_key=True, unique=True, nullable=False, index=True)
+    Location = Column(String, index=True)
+    Age = Column(Integer, unique=False, index=True, nullable=True)
+
+    def __init__(self, User_Id, Location, Age):
+        self.User_Id = User_Id
+        self.Location = Location
+        self.Age = Age
 
 
-# class Ratings(Base):
-#     pass
+class Ratings(Base):
+    __tablename__ = "ratings"
+    User_Id = Column(Integer, primary_key=True , index=True) #ForeignKey("users.User_Id")
+    ISBN = Column(String,primary_key=True ,index=True) # ForeignKey("books.ISBN")
+    Book_Rating = Column(Integer, index=True)
+
+    def __init__(self, User_Id, ISBN, Book_Rating):
+        self.User_Id = User_Id
+        self.ISBN = ISBN
+        self.Book_Rating = Book_Rating
 
 
 

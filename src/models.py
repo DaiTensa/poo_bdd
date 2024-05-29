@@ -126,9 +126,9 @@ class Ratings(Base):
         return count_rating
 
 
-#1- création d'un prêt --> id auto incrémenté
+#1- création d'un prêt --> id auto incrémenté (on fait un prêt si book_ref in Book_ISBN et Si Status = "Rendu")
 #2- référence à un livre et un user :
-    # livre : si disponible
+    # livre : si disponible (book_ref in Book_Ref and Loan_Status = "Rendu")
     # user : pas plus de 5 prêts (en cours)
     # date de début : date de création du prêt
 #3- une méthode : retourner un prêt
@@ -147,20 +147,44 @@ class Loan(Base):
 
     @classmethod
     def add_loan(cls, user_id, book_ref, session):
-        
-        query_laon_user = session.query(cls.User_Id, cls.Loan_Status).all()
-        # userid_ = [userid[1] for userid in query_laon_user ]
-        print(query_laon_user)
+        ok_loan = False
+        query_book_isbn = session.query(Book.ISBN).all()
+        liste_isbn = [isbn[0] for isbn in query_book_isbn]
 
 
-        pret = cls(
+        if book_ref in liste_isbn:
+
+            query_status= select(cls.Loan_Status).select_from(cls).where(cls.User_Id == user_id)
+            results = session.execute(query_status)
+            liste_status = [status[0] for status in results]
+
+            if len(liste_status) > 5:
+                print(liste_status)
+                print("Vous ne pouvez louer plus de 5 livres")
+            else:
+                ok_loan = True
+        else:
+            print("Livre introuvable")
+
+
+        if ok_loan:
+            pret = cls(
             User_Id = user_id,
             Book_Ref = book_ref,
             Laon_Date = date.today(),
             Loan_Status = "En cours"
         )
-        session.add(pret)
-        session.commit()
+            session.add(pret)
+            session.commit()
+
+        
+
+        # query_laon_user = session.query(cls.User_Id, cls.Loan_Status).all()
+        # # userid_ = [userid[1] for userid in query_laon_user ]
+        # print(query_laon_user)
+
+
+        
 
     @classmethod
     def return_laon(cls):

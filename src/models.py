@@ -3,6 +3,7 @@ from sqlalchemy.orm import relationship, declarative_base
 from sqlalchemy import func
 from statistics import mean, stdev
 from sqlalchemy import select
+from datetime import date
 
 
 # classe de base
@@ -58,6 +59,7 @@ class Author(Base):
         liste_books = [book[0] for book in results]
         for row in liste_books:
             print(row)
+        print()
         return results
 
 class Users(Base):
@@ -92,7 +94,6 @@ class Users(Base):
         count_ages = len(ages)
         return count_ages
 
-
 class Ratings(Base):
     __tablename__ = "ratings"
     User_Id = Column(Integer, primary_key=True , index=True) #ForeignKey("users.User_Id")
@@ -125,4 +126,43 @@ class Ratings(Base):
         return count_rating
 
 
+#1- création d'un prêt --> id auto incrémenté
+#2- référence à un livre et un user :
+    # livre : si disponible
+    # user : pas plus de 5 prêts (en cours)
+    # date de début : date de création du prêt
+#3- une méthode : retourner un prêt
+    # status : en cours à rendu
+    # la date se met à jour
+    # le livre devient disponible
+    # user un prêt en moins
+
+class Loan(Base):
+    __tablename__ = "loans"
+    Id = Column(Integer, primary_key=True ,autoincrement=True, index=True, nullable=False)
+    User_Id = Column(Integer, index=True)
+    Book_Ref = Column(String, nullable=False, index=True)
+    Laon_Date = Column(String)
+    Loan_Status = Column(String)
+
+    @classmethod
+    def add_loan(cls, user_id, book_ref, session):
+        
+        query_laon_user = session.query(cls.User_Id, cls.Loan_Status).all()
+        # userid_ = [userid[1] for userid in query_laon_user ]
+        print(query_laon_user)
+
+
+        pret = cls(
+            User_Id = user_id,
+            Book_Ref = book_ref,
+            Laon_Date = date.today(),
+            Loan_Status = "En cours"
+        )
+        session.add(pret)
+        session.commit()
+
+    @classmethod
+    def return_laon(cls):
+        pass
 

@@ -6,7 +6,7 @@ from sqlalchemy import create_engine
 from models import Base
 from utils.mes_fonctions import import_books_from_csv, import_users_from_csv, import_ratings_from_csv, fake_authors_populate
 from sqlalchemy.orm import sessionmaker
-from models import Book, Users, Ratings, Author
+from models import Book, Users, Ratings, Author, Loan
 
 db_path = 'sqlite:///data/books.db'
 

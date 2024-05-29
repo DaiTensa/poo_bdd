@@ -1,7 +1,7 @@
 import sys
 sys.path.append('/home/dai/Documents/Python_Projects/sql/sqlite_projects')
 
-from models import Book, Users, Ratings, Author
+from models import Book, Users, Ratings, Author, Loan
 from sqlalchemy import select
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -45,8 +45,19 @@ session = Session()
 
 
 
-# display athor book
-
+# display athor book ex : David Benioff
 David_Benioff_books = Author.display_books_author(session=session, author_name= "David Benioff")
+
+
+# display athor book  ex: Carlo D'Este
+Carlo_D_Este_books = Author.display_books_author(session=session, author_name= "Carlo D'Este")
+
+
+# Ajout d'un prêt - simulation 
+Loan.add_loan(user_id=2, book_ref= "0195153448", session=session)
+Loan.add_loan(user_id=2, book_ref= "0679425608", session=session)
+Loan.add_loan(user_id=3, book_ref= "080652121X", session=session)
+Loan.add_loan(user_id=3, book_ref= "055321215X", session=session)
+Loan.add_loan(user_id=10, book_ref= "0340767936", session=session)
 
 

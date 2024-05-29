@@ -4,9 +4,9 @@ sys.path.append('/home/dai/Documents/Python_Projects/sql/sqlite_projects')
 
 from sqlalchemy import create_engine
 from models import Base
-from utils.mes_fonctions import import_books_from_csv, import_users_from_csv, import_ratings_from_csv
+from utils.mes_fonctions import import_books_from_csv, import_users_from_csv, import_ratings_from_csv, fake_authors_populate
 from sqlalchemy.orm import sessionmaker
-from models import Book, Users, Ratings
+from models import Book, Users, Ratings, Author
 
 db_path = 'sqlite:///data/books.db'
 
@@ -34,5 +34,9 @@ if __name__ == "__main__":
     # Import Ratings
     csv_file_path_ratings = '/home/dai/Documents/Python_Projects/sql/sqlite_projects/data/ratings.csv'
     import_ratings_from_csv(csv_file_path_ratings, session= session, model=Ratings)
+
+
+    liste_authors = Book.author_names(session=session)
+    fake_authors_populate(liste_author_names = liste_authors, model =Author, session=session)
 
 

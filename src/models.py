@@ -12,9 +12,11 @@ class Book(Base):
     __tablename__ = "books"
     ISBN = Column(String, unique=True , primary_key=True, nullable=False, index=True)
     Book_Title = Column(String, index=True)
-    Book_Author = Column(String, index=True)
+    Book_Author = Column(String, ForeignKey('authors.Author_Name'),index=True)
     Year_Of_Publication = Column(Integer, index=True)
     Publisher = Column(String, index=True)
+
+    author = relationship('Author', back_populates='books')
 
     def __repr__(self):
         return f"{self.Book_Title} [{self.Book_Author}] ({self.Year_Of_Publication})"
@@ -31,6 +33,28 @@ class Book(Base):
         years = [year[0] for year in query_years if year[0] != "NULL"]
         return max(years)
     
+    @classmethod
+    def author_names(cls, session):
+        query_author_names = session.query(cls.Book_Author).distinct().all()
+        authors_names = [author[0] for author in query_author_names]
+        return authors_names
+    
+class Author(Base):
+    __tablename__ = "authors"
+    id = Column(Integer, primary_key=True ,autoincrement=True, nullable=False, index=True)
+    Author_Name= Column(String, nullable=False, index=True)
+    Birth_Year = Column(Integer, nullable=False, index=True)
+    Death_Year = Column(Integer, index=True)
+    Nationality = Column(String, nullable=False)
+
+    books = relationship('Book', back_populates='author')
+
+    def display_books_author():
+        pass
+
+
+
+
 
 class Users(Base):
     __tablename__ = "users"

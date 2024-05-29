@@ -1,11 +1,17 @@
 import csv
 
+from faker import Faker
+
+# initialisation faker to generate some random things
+fake = Faker()
+
+
 # function to import books
 def import_books_from_csv(csv_file_path, session, model):
     with open(csv_file_path, newline='', encoding='ISO-8859-1') as csvfile:
         csvreader = csv.DictReader(csvfile, delimiter=';', quotechar='"', escapechar='\\')
         number_of_rows = 0
-        
+
         for row in csvreader:
             if number_of_rows >=50000:
                 break
@@ -57,3 +63,18 @@ def import_ratings_from_csv(csv_file_path, session, model):
             # print(rating)
             number_of_rows += 1
         session.commit()
+
+
+# data authors tables
+def fake_authors_populate(liste_author_names, model, session):
+    for author_name in liste_author_names:
+        birth_year = fake.year()
+        death_year = int(birth_year) + 50
+        author = model(
+            Author_Name = author_name,
+            Birth_Year = birth_year,
+            Death_Year = death_year,
+            Nationality = fake.country()
+        )
+        session.add(author)
+    session.commit()

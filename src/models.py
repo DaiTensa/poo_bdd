@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, Float, ForeignKey
 from sqlalchemy.orm import relationship, declarative_base
 from sqlalchemy import func
 from statistics import mean, stdev
+from sqlalchemy import select
 
 
 # classe de base
@@ -12,7 +13,7 @@ class Book(Base):
     __tablename__ = "books"
     ISBN = Column(String, unique=True , primary_key=True, nullable=False, index=True)
     Book_Title = Column(String, index=True)
-    Book_Author = Column(String, ForeignKey('authors.Author_Name'),index=True)
+    Book_Author = Column(String,index=True)
     Year_Of_Publication = Column(Integer, index=True)
     Publisher = Column(String, index=True)
 
@@ -42,19 +43,22 @@ class Book(Base):
 class Author(Base):
     __tablename__ = "authors"
     id = Column(Integer, primary_key=True ,autoincrement=True, nullable=False, index=True)
-    Author_Name= Column(String, nullable=False, index=True)
+    Author_Name= Column(String, ForeignKey("books.Book_Author"),nullable=False, index=True)
     Birth_Year = Column(Integer, nullable=False, index=True)
     Death_Year = Column(Integer, index=True)
     Nationality = Column(String, nullable=False)
 
-    books = relationship('Book', back_populates='author')
+    books = relationship('Book')
 
-    def display_books_author():
-        pass
-
-
-
-
+    @classmethod
+    def display_books_author(cls, session, author_name):
+        stmt = select(Book.Book_Title).select_from(Book).join(Author, Author.Author_Name == Book.Book_Author).where(Author.Author_Name == author_name)
+        results = session.execute(stmt)
+        print(f"{author_name} books :")
+        liste_books = [book[0] for book in results]
+        for row in liste_books:
+            print(row)
+        return results
 
 class Users(Base):
     __tablename__ = "users"

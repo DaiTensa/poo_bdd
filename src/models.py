@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, Date
 from sqlalchemy.orm import relationship, declarative_base
 from sqlalchemy import func
 from statistics import mean, stdev
@@ -51,8 +51,7 @@ class Author(Base):
 
     books = relationship('Book')
 
-    @classmethod
-    def display_books_author(cls, session, author_name):
+    def display_books_author(session, author_name):
         stmt = select(Book.Book_Title).select_from(Book).join(Author, Author.Author_Name == Book.Book_Author).where(Author.Author_Name == author_name)
         results = session.execute(stmt)
         print(f"{author_name} books :")
@@ -140,51 +139,48 @@ class Ratings(Base):
 class Loan(Base):
     __tablename__ = "loans"
     Id = Column(Integer, primary_key=True ,autoincrement=True, index=True, nullable=False)
-    User_Id = Column(Integer, index=True)
-    Book_Ref = Column(String, nullable=False, index=True)
-    Laon_Date = Column(String)
+    User_Id = Column(Integer, ForeignKey("users.User_Id"),index=True)
+    Book_Ref = Column(String, ForeignKey("books.ISBN"),nullable=False, index=True)
+    Laon_Date = Column(Date, default=date.today())
+    Laon_End_Date = Column(Date, nullable=True)
     Loan_Status = Column(String)
+
+    user = relationship("Users")
+    book = relationship("Book")
 
     @classmethod
     def add_loan(cls, user_id, book_ref, session):
-        ok_loan = False
-        query_book_isbn = session.query(Book.ISBN).all()
-        liste_isbn = [isbn[0] for isbn in query_book_isbn]
 
+        # Si le livre existe dans la base de données
+        # query_all_books_isbn = session.query(Book.ISBN).all()
+        # liste_isbn = [isbn[0] for isbn in query_all_books_isbn]
+        # if not book_ref  in liste_isbn:
+        #     print(f"Le livre {book_ref} n'existe pas !")
+        #     return
 
-        if book_ref in liste_isbn:
-
-            query_status= select(cls.Loan_Status).select_from(cls).where(cls.User_Id == user_id)
-            results = session.execute(query_status)
-            liste_status = [status[0] for status in results]
-
-            if len(liste_status) > 5:
-                print(liste_status)
-                print("Vous ne pouvez louer plus de 5 livres")
-            else:
-                ok_loan = True
-        else:
-            print("Livre introuvable")
-
-
-        if ok_loan:
-            pret = cls(
-            User_Id = user_id,
-            Book_Ref = book_ref,
-            Laon_Date = date.today(),
-            Loan_Status = "En cours"
-        )
-            session.add(pret)
-            session.commit()
-
+        # 1- Vérifier si le livre est disponible
+        book = session.query(cls).filter_by(Book_Ref=book_ref, Loan_Status = "Rendu")
+        if not book:
+            print(f"Le livre n'est pas disponible aujourd'huit - {date.today()}")
+            return
         
-
-        # query_laon_user = session.query(cls.User_Id, cls.Loan_Status).all()
-        # # userid_ = [userid[1] for userid in query_laon_user ]
-        # print(query_laon_user)
-
-
+        # 2- pas plus de 5 livres
+        pret_actif_count = session.query(cls).filter_by(User_Id = user_id, Loan_Status = "En cours").count()
+        if pret_actif_count >= 5:
+            print(f"{user_id} {date.today()} vous avez {pret_actif_count} prêts en cours !")
+            return
         
+        # 3- Création du pret
+        pret = cls(
+        User_Id = user_id,
+        Book_Ref = book_ref,
+        Laon_Date = date.today(),
+        Loan_Status = "En cours"
+    )
+        session.add(pret)
+        session.commit()
+        print(f"{user_id} pret crée avec succès !")
+        return pret
 
     @classmethod
     def return_laon(cls):

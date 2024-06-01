@@ -57,3 +57,13 @@ def test_book_statistics(session,books):
 def test_rating_statistics(session,ratings):
     assert ratings[0].mean_ratings(session) == 4.5
     assert ratings[0].stdev_ratings(session) == 0.7071067811865476
+
+def test_return_loan(session,users,books):
+    laon = Loan.add_loan(session=session, user_id=users[0].User_Id, book_ref=books[0].ISBN)
+    laon.return_laon(session=session, user_id=users[0].User_Id, book_ref=books[0].ISBN)
+    assert laon.Loan_Status == "Rendu"
+
+# /!\ Ordre d'execution des tests très important 
+def test_create_loan(session,users,books):
+    loan = Loan.add_loan(session=session, user_id=users[0].User_Id, book_ref=books[0].ISBN)
+    assert loan.Loan_Status == "En cours"

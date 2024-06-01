@@ -195,7 +195,7 @@ class Loan(Base):
 
             session.commit()
             print(f"Le livre {book_ref} rendu par l'utilisateur {user_id}")
-            return True
+            return
         print(f"Pret non trouvé ou livre déjà rendu.")
-        return False
+        return 
 

@@ -19,24 +19,24 @@ Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)
 session = Session()
 
-if __name__ == "__main__":
-
-    # Import Books
-    csv_file_path_books = '/home/dai/Documents/Python_Projects/sql/sqlite_projects/data/books.csv'
-    import_books_from_csv(csv_file_path_books, session= session, model=Book)
 
 
-    # Import Users
-    csv_file_path_users = '/home/dai/Documents/Python_Projects/sql/sqlite_projects/data/users.csv'
-    import_users_from_csv(csv_file_path_users, session= session, model=Users)
+# Import Books
+csv_file_path_books = '/home/dai/Documents/Python_Projects/sql/sqlite_projects/data/books.csv'
+import_books_from_csv(csv_file_path_books, session= session, model=Book)
 
 
-    # Import Ratings
-    csv_file_path_ratings = '/home/dai/Documents/Python_Projects/sql/sqlite_projects/data/ratings.csv'
-    import_ratings_from_csv(csv_file_path_ratings, session= session, model=Ratings)
+# Import Users
+csv_file_path_users = '/home/dai/Documents/Python_Projects/sql/sqlite_projects/data/users.csv'
+import_users_from_csv(csv_file_path_users, session= session, model=Users)
 
 
-    liste_authors = Book.author_names(session=session)
-    fake_authors_populate(liste_author_names = liste_authors, model =Author, session=session)
+# Import Ratings
+csv_file_path_ratings = '/home/dai/Documents/Python_Projects/sql/sqlite_projects/data/ratings.csv'
+import_ratings_from_csv(csv_file_path_ratings, session= session, model=Ratings)
+
+
+liste_authors = Book.author_names(session=session)
+fake_authors_populate(liste_author_names = liste_authors, model =Author, session=session)
 
 

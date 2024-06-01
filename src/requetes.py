@@ -61,7 +61,5 @@ Loan.add_loan(user_id=3, book_ref= "055321215X", session=session)
 Loan.add_loan(user_id=10, book_ref= "0340767936", session=session)
 Loan.add_loan(user_id=11, book_ref= "0340767936", session=session)
 
-
-
-
-
+# # Retourner un prêt simulation
+Loan.return_laon(user_id=11, book_ref= "0340767936", session=session)

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, Date
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, UniqueConstraint,DateTime, Date
 from sqlalchemy.orm import relationship, declarative_base
 from sqlalchemy import func
 from statistics import mean, stdev
@@ -95,10 +95,12 @@ class Users(Base):
 
 class Ratings(Base):
     __tablename__ = "ratings"
-    User_Id = Column(Integer, primary_key=True , index=True) #ForeignKey("users.User_Id")
-    ISBN = Column(String,primary_key=True ,index=True) # ForeignKey("books.ISBN")
+    User_Id = Column(Integer,ForeignKey("users.User_Id") ,index=True) #
+    ISBN = Column(String,ForeignKey("books.ISBN"),primary_key=True ,index=True) # 
     Book_Rating = Column(Integer, index=True)
 
+    user = relationship("Users")
+    book = relationship("Book")
 
     # moyenne des notes
     @classmethod
@@ -183,6 +185,17 @@ class Loan(Base):
         return pret
 
     @classmethod
-    def return_laon(cls):
-        pass
+    def return_laon(cls, book_ref, user_id, session):
+        # Find the loan
+        pret = session.query(cls).filter_by(Book_Ref=book_ref, User_Id= user_id, Loan_Status="En cours").first()
+        if pret:
+            # Update the loan status and end_date
+            pret.Loan_Status = "Rendu"
+            pret.Laon_End_Date = date.today()
+
+            session.commit()
+            print(f"Le livre {book_ref} rendu par l'utilisateur {user_id}")
+            return True
+        print(f"Pret non trouvé ou livre déjà rendu.")
+        return False
 
